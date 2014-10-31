@@ -76,11 +76,18 @@
     [self.commandDelegate runInBackground:^{
         CDVPluginResult* pluginResult = nil;
         
+        #ifdef DEBUG
+            NSString* isDebug = @"true";
+        #else
+            NSString* isDebug = @"false";
+        #endif
+        
         NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"], @"bundleVersion",
                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"], @"bundleBuild",
                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"], @"bundleId",
                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"], @"bundleDisplayName",
+                              isDebug, @"bundleIsDebug",
                               [[NSLocale preferredLanguages] objectAtIndex:0], @"localeLanguage", nil];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:info];
         

@@ -5,7 +5,7 @@ Cordova AppUtils Plugin for Apache Cordova >= 3.0.0
 
 ## Installation
 
-    cordova plugin add https://github.com/mindstorm/cordova-plugin-app-utils.git
+    cordova plugin add https://github.com/ryanwilliams83/cordova-plugin-app-utils.git
     
 ## AppUtils
 
@@ -51,7 +51,8 @@ Get the App Bundle Info.
 					"bundleBuild": <STRING>,
 					"bundleVersion": <STRING>,
 					"bundleId": <STRING>,
-					"bundleDisplayName": <STRING>
+					"bundleDisplayName": <STRING>,
+					"bundleIsDebug": <STRING>
 				}
 				automatic available under "apputils.info"
 		*/
@@ -107,6 +108,7 @@ Social Share Function from the build-in Social.framework
 		*/
 
 ## Supported Platforms
+Android
 iOS
 
 ## Version History
