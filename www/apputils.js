@@ -30,18 +30,27 @@ var AppUtils = function () {
 // IdleTimer
 AppUtils.prototype.IdleTimer = {
 	enable: function (onSuccess, onError) {
+		if (device.platform == DEVICE_TYPE_ANDROID)
+                        return;
+
 		var options = {
 			"action": "enable"
 		};
 		exec(onSuccess, onError, "AppUtils", "IdleTimer", [options]);
 	},
 	disable: function (onSuccess, onError) {
+		if (device.platform == DEVICE_TYPE_ANDROID)
+                        return;
+
 		var options = {
 			"action": "disable"
 		};
 		exec(onSuccess, onError, "AppUtils", "IdleTimer", [options]);
 	},
 	getStatus: function (onSuccess) {
+		if (device.platform == DEVICE_TYPE_ANDROID)
+                        return;
+
 		var options = {
 			"action": "status"
 		};

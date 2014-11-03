@@ -10,6 +10,13 @@
 	<js-module src="www/apputils.js" name="AppUtils">
 		<clobbers target="apputils" />
 	</js-module>
+	<platform name="android">
+		<config-file target="config.xml" parent="/*">
+			<feature name="AppUtils">
+				<param name="android-package" value="com.busivid.AppUtils" />
+			</feature>
+		</config-file>
+	</platform>
 	<platform name="ios">
 		<config-file target="config.xml" parent="/*">
 			<feature name="AppUtils">
