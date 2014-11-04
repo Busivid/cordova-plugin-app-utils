@@ -1,4 +1,4 @@
-package com.busivid.AppUtils;
+package au.id.ryanwilliams.cordova.apputils;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -11,11 +11,11 @@ public class AppUtils extends CordovaPlugin {
 
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        	if (action.equals("BundleInfo")) {
+		if (action.equals("BundleInfo")) {
  			Map<string, string> bundleInfo = this.bundleInfo();
 			callbackContext.success(bundleInfo);
 			return true;
-            	} 
+		} 
 		return false;
 	}
 
@@ -26,7 +26,7 @@ public class AppUtils extends CordovaPlugin {
 
 		results.put("bundleVersion", packageInfo.versionCode);
 		results.put("bundleId", this.cordova.getActivity().getPackageName());
-                results.put("isDebug", BuildConfig.DEBUG);
+		results.put("bundleIsDebug", BuildConfig.DEBUG);
 		return results;	
 	}
 
