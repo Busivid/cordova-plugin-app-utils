@@ -31,6 +31,14 @@
 @synthesize controller;
 @synthesize popover;
 
+- (void)DeviceInfo:(CDVInvokedUrlCommand *)command
+{
+    CDVPluginResult* pluginResult = nil;
+    NSMutableDictionary* deviceInfo = [NSMutableDictionary dictionaryWithCapacity:1;
+    [devivceInfo setObject:[device name] forKey:"name"];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:deviceInfo];
+}
+
 - (void)IdleTimer:(CDVInvokedUrlCommand *)command
 {
     CDVPluginResult* pluginResult = nil;

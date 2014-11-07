@@ -15,6 +15,14 @@ public class AppUtils extends CordovaPlugin {
  			Map<string, string> bundleInfo = this.bundleInfo();
 			callbackContext.success(bundleInfo);
 			return true;
+		} else if(action.equals("SocialShare")) {
+			
+			return true;
+		} else if (action.equals("DeviceInfo")) {
+			 JSONObject r = new JSONObject();
+			r.put("name", this.getHostname());
+			callbackContext.success(r);
+			return true;
 		} 
 		return false;
 	}
@@ -29,5 +37,16 @@ public class AppUtils extends CordovaPlugin {
 		results.put("bundleIsDebug", BuildConfig.DEBUG);
 		return results;	
 	}
+
+	public static String getHostname() {
+		try {
+			Method getString = Build.class.getDeclaredMethod("getString", String.class);
+			getString.setAccessible(true);
+			return getString.invoke(null, "net.hostname").toString();
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
 
 }

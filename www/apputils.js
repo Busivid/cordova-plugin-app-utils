@@ -40,7 +40,7 @@ AppUtils.prototype.IdleTimer = {
 	},
 	disable: function (onSuccess, onError) {
 		if (device.platform == DEVICE_TYPE_ANDROID)
-                        return;
+ 			return;
 
 		var options = {
 			"action": "disable"
@@ -62,6 +62,10 @@ AppUtils.prototype.IdleTimer = {
 AppUtils.prototype.BundleInfo = function (onSuccess) {
 	exec(onSuccess, null, "AppUtils", "BundleInfo", []);
 };
+
+AppUtils.prototype.DeviceInfo = function(onSuccess) {
+	exec(onSuccess, null, "AppUtils", "DeviceInfo", []);
+}
 
 // OpenWith
 AppUtils.prototype.OpenWith = function (onSuccess, onError, options) {
