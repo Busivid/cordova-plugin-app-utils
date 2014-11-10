@@ -33,6 +33,7 @@
 
 - (void)DeviceInfo:(CDVInvokedUrlCommand *)command
 {
+    UIDevice* device = [UIDevice currentDevice]; 
     NSMutableDictionary* deviceInfo = [NSMutableDictionary dictionaryWithCapacity:1];
     [deviceInfo setObject:[device name] forKey:"name"];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:deviceInfo];
