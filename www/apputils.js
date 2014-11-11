@@ -65,7 +65,7 @@ AppUtils.prototype.BundleInfo = function (onSuccess) {
 
 AppUtils.prototype.DeviceInfo = function(onSuccess) {
 	exec(onSuccess, null, "AppUtils", "DeviceInfo", []);
-}
+};
 
 // OpenWith
 AppUtils.prototype.OpenWith = function (onSuccess, onError, options) {
