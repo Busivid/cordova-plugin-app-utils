@@ -1,5 +1,8 @@
 /* global require, module */
 
+var DEVICE_PLATFORM_ANDROID = 'Android';
+var DEVICE_PLATFORM_IOS = 'iOS';
+
 var exec = require("cordova/exec"),
 	channel = require('cordova/channel'),
 	utils = require('cordova/utils');
@@ -30,7 +33,7 @@ var AppUtils = function () {
 // IdleTimer
 AppUtils.prototype.IdleTimer = {
 	enable: function (onSuccess, onError) {
-		if (device.platform == DEVICE_TYPE_ANDROID)
+		if (device.platform == DEVICE_PLATFORM_ANDROID)
                         return;
 
 		var options = {
@@ -39,7 +42,7 @@ AppUtils.prototype.IdleTimer = {
 		exec(onSuccess, onError, "AppUtils", "IdleTimer", [options]);
 	},
 	disable: function (onSuccess, onError) {
-		if (device.platform == DEVICE_TYPE_ANDROID)
+		if (device.platform == DEVICE_PLATFORM_ANDROID)
  			return;
 
 		var options = {
@@ -48,7 +51,7 @@ AppUtils.prototype.IdleTimer = {
 		exec(onSuccess, onError, "AppUtils", "IdleTimer", [options]);
 	},
 	getStatus: function (onSuccess) {
-		if (device.platform == DEVICE_TYPE_ANDROID)
+		if (device.platform == DEVICE_PLATFORM_ANDROID)
                         return;
 
 		var options = {
