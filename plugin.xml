@@ -13,9 +13,10 @@
 	<platform name="android">
 		<config-file target="config.xml" parent="/*">
 			<feature name="AppUtils">
-				<param name="android-package" value="com.busivid.AppUtils" />
+		                <param name="android-package" value="au.id.ryanwilliams.cordova.apputils.AppUtils"/>
 			</feature>
 		</config-file>
+		 <source-file src="src/android/AppUtils.java" target-dir="src/au.id.ryanwilliams.cordova.apputils/" />
 	</platform>
 	<platform name="ios">
 		<config-file target="config.xml" parent="/*">
