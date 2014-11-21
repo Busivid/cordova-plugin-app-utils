@@ -1,5 +1,14 @@
 package au.id.ryanwilliams.cordova.apputils;
 
+import android.app.Activity;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
+
+import java.lang.reflect.Method;
+
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 
@@ -12,29 +21,39 @@ public class AppUtils extends CordovaPlugin {
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 		if (action.equals("BundleInfo")) {
- 			Map<string, string> bundleInfo = this.bundleInfo();
-			callbackContext.success(bundleInfo);
-			return true;
+			try {
+ 				JSONObject bundleInfo = this.bundleInfo();
+				callbackContext.success(bundleInfo);
+			} catch (NameNotFoundException exception) {
+				callbackContext.error(exception.getMessage());	
+			}
 		} else if(action.equals("SocialShare")) {
-			
-			return true;
+			//will put some logic here soon
+			JSONObject socialShareResults = new JSONObject();
+			callbackContext.success(socialShareResults);	
 		} else if (action.equals("DeviceInfo")) {
-			 JSONObject r = new JSONObject();
-			r.put("name", this.getHostname());
-			callbackContext.success(r);
-			return true;
-		} 
-		return false;
+			JSONObject deviceInfo = new JSONObject();
+			deviceInfo.put("name", this.getHostname());
+			callbackContext.success(deviceInfo);
+		} else {
+			return false;
+		}
+		return true;
 	}
 
-	public Map<string, string> bundleInfo() {
-		Map<String, String> results = new Map<String, String>();
+	public JSONObject bundleInfo() throws JSONException, NameNotFoundException {
+		JSONObject results = new JSONObject();
 
-		PackageInfo packageInfo = packageManager.getPackageInfo(this.cordova.getActivity().getPackageName(), 0);
+		Activity cordovaActivity = this.cordova.getActivity();
+		String packageName = cordovaActivity.getPackageName();
+		
+		PackageInfo packageInfo = cordovaActivity.getPackageManager().getPackageInfo(packageName, 0);
+
+		boolean isDebug = (cordovaActivity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
 
 		results.put("bundleVersion", packageInfo.versionCode);
-		results.put("bundleId", this.cordova.getActivity().getPackageName());
-		results.put("bundleIsDebug", BuildConfig.DEBUG);
+		results.put("bundleId", packageName);
+		results.put("bundleIsDebug", isDebug);
 		return results;	
 	}
 
@@ -47,6 +66,4 @@ public class AppUtils extends CordovaPlugin {
 			return null;
 		}
 	}
-
-
 }
