@@ -27,14 +27,18 @@ public class AppUtils extends CordovaPlugin {
 			} catch (NameNotFoundException exception) {
 				callbackContext.error(exception.getMessage());	
 			}
-		} else if(action.equals("SocialShare")) {
-			//will put some logic here soon
-			JSONObject socialShareResults = new JSONObject();
-			callbackContext.success(socialShareResults);	
 		} else if (action.equals("DeviceInfo")) {
 			JSONObject deviceInfo = new JSONObject();
 			deviceInfo.put("name", this.getHostname());
 			callbackContext.success(deviceInfo);
+		} else if(action.equals("ShareToEmail")) {
+			JSONObject jsonObject = args.getJSONObject(0);
+			sendEmail(jsonObject.getString("text"));
+			callbackContext.success();	
+		} else if(action.equals("ShareToSms")) {
+			JSONObject jsonObject = args.getJSONObject(0);
+			sendSms(jsonObject.getString("text"));
+			callbackContext.success();	
 		} else {
 			return false;
 		}
@@ -64,6 +68,40 @@ public class AppUtils extends CordovaPlugin {
 			return getString.invoke(null, "net.hostname").toString();
 		} catch (Exception ex) {
 			return null;
+		}
+	}
+
+	public static void sendSms(String smsText) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(activity); //Need to change the build to API 19
+			Intent sendIntent = new Intent(Intent.ACTION_SEND);
+			sendIntent.setType("text/plain");
+			sendIntent.putExtra(Intent.EXTRA_TEXT, smsText);
+
+			if (defaultSmsPackageName != null) { // if no default then Android will allow user to select from list
+				sendIntent.setPackage(defaultSmsPackageName);
+			}
+
+			activity.startActivity(sendIntent);
+			return;
+		}
+		//pre-kitkat way of sending an sms
+		Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+		sendIntent.setData(Uri.parse("sms:"));
+		sendIntent.putExtra("sms_body", smsText);
+		activity.startActivity(sendIntent);
+	}
+
+	public static void sendEmail(String emailText) {
+		Intent i = new Intent(Intent.ACTION_SEND);
+		i.setType("message/rfc822");
+		//i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
+		//i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
+		i.putExtra(Intent.EXTRA_TEXT, emailText);
+		try {
+    		startActivity(Intent.createChooser(i, "Send mail..."));
+		} catch (android.content.ActivityNotFoundException ex) {
+    		Toast.makeText(MyActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
 		}
 	}
 }

@@ -80,4 +80,13 @@ AppUtils.prototype.SocialShare = function (onSuccess, onError, options) {
 	exec(onSuccess, onError, "AppUtils", "SocialShare", [options]);
 };
 
+//Share to SMS 
+AppUtils.prototype.ShareToSms = function (onSccess, onError, options) {
+	exec(onSuccess, onError, "AppUtils", "ShareToSms", [options]);
+};
+
+AppUtils.prototype.ShareToEmail = function (onSuccess, onError, options) {
+	exec(onSuccess, onError, "AppUtils", "ShareToEmail", [options]);
+}
+
 module.exports = new AppUtils();
