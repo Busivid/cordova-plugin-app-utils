@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Telephony;
 
@@ -73,7 +74,7 @@ public class AppUtils extends CordovaPlugin {
 		}
 	}
 
-	public static void sendSms(String smsText) {
+	public void sendSms(String smsText) {
 		Activity activity = this.cordova.getActivity();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(activity); //Need to change the build to API 19
@@ -96,13 +97,13 @@ public class AppUtils extends CordovaPlugin {
 		activity.startActivity(sendIntent);
 	}
 
-	public static void sendEmail(String emailText) {
+	public void sendEmail(String emailText) {
 		Activity activity = this.cordova.getActivity();
 		Intent i = new Intent(Intent.ACTION_SEND);
 		i.setType("message/rfc822");
 		//i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
 		//i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
 		i.putExtra(Intent.EXTRA_TEXT, emailText);
-    		startActivity(Intent.createChooser(i, "Send mail..."));
+    		activity.startActivity(Intent.createChooser(i, "Send mail..."));
 	}
 }
