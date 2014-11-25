@@ -2,10 +2,12 @@ package au.id.ryanwilliams.cordova.apputils;
 
 import android.app.Activity;
 import android.content.pm.ApplicationInfo;
+import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.provider.Telephony;
 
 import java.lang.reflect.Method;
 
@@ -72,6 +74,7 @@ public class AppUtils extends CordovaPlugin {
 	}
 
 	public static void sendSms(String smsText) {
+		Activity activity = this.cordova.getActivity();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(activity); //Need to change the build to API 19
 			Intent sendIntent = new Intent(Intent.ACTION_SEND);
@@ -85,6 +88,7 @@ public class AppUtils extends CordovaPlugin {
 			activity.startActivity(sendIntent);
 			return;
 		}
+
 		//pre-kitkat way of sending an sms
 		Intent sendIntent = new Intent(Intent.ACTION_VIEW);
 		sendIntent.setData(Uri.parse("sms:"));
@@ -93,15 +97,16 @@ public class AppUtils extends CordovaPlugin {
 	}
 
 	public static void sendEmail(String emailText) {
+		Activity activity = this.cordova.getActivity();
 		Intent i = new Intent(Intent.ACTION_SEND);
 		i.setType("message/rfc822");
 		//i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
 		//i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
 		i.putExtra(Intent.EXTRA_TEXT, emailText);
 		try {
-    		startActivity(Intent.createChooser(i, "Send mail..."));
+    			startActivity(Intent.createChooser(i, "Send mail..."));
 		} catch (android.content.ActivityNotFoundException ex) {
-    		Toast.makeText(MyActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+    			Toast.makeText(activity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
 		}
 	}
 }
