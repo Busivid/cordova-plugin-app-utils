@@ -103,10 +103,6 @@ public class AppUtils extends CordovaPlugin {
 		//i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
 		//i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
 		i.putExtra(Intent.EXTRA_TEXT, emailText);
-		try {
-    			startActivity(Intent.createChooser(i, "Send mail..."));
-		} catch (android.content.ActivityNotFoundException ex) {
-    			Toast.makeText(activity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-		}
+    		startActivity(Intent.createChooser(i, "Send mail..."));
 	}
 }
