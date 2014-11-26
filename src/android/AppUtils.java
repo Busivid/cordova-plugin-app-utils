@@ -100,7 +100,7 @@ public class AppUtils extends CordovaPlugin {
 	public void sendEmail(String emailText) {
 		Activity activity = this.cordova.getActivity();
 		Intent i = new Intent(Intent.ACTION_SEND);
-		i.setType("message/rfc822");
+		i.setType("text/html");
 		//i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
 		//i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
 		i.putExtra(Intent.EXTRA_TEXT, emailText);
