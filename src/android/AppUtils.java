@@ -36,7 +36,7 @@ public class AppUtils extends CordovaPlugin {
 			callbackContext.success(deviceInfo);
 		} else if(action.equals("ShareToEmail")) {
 			JSONObject jsonObject = args.getJSONObject(0);
-			sendEmail(jsonObject.getString("text"));
+			sendEmail(jsonObject.getString("text"), jsonObject.getString("subject"));
 			callbackContext.success();	
 		} else if(action.equals("ShareToSms")) {
 			JSONObject jsonObject = args.getJSONObject(0);
@@ -97,13 +97,14 @@ public class AppUtils extends CordovaPlugin {
 		activity.startActivity(sendIntent);
 	}
 
-	public void sendEmail(String emailText) {
+	public void sendEmail(String emailText, String subject) {
 		Activity activity = this.cordova.getActivity();
 		Intent i = new Intent(Intent.ACTION_SEND);
 		i.setType("text/html");
 		//i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
-		//i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
-		i.putExtra(Intent.EXTRA_TEXT, emailText);
+		i.putExtra(Intent.EXTRA_SUBJECT, subject);
+		i.putExtra(Intent.EXTRA_TEXT, android.text.Html.fromHtml(emailText));
+);
     		activity.startActivity(Intent.createChooser(i, "Send mail..."));
 	}
 }
