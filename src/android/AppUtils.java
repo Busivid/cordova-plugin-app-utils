@@ -104,7 +104,6 @@ public class AppUtils extends CordovaPlugin {
 		//i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
 		i.putExtra(Intent.EXTRA_SUBJECT, subject);
 		i.putExtra(Intent.EXTRA_TEXT, android.text.Html.fromHtml(emailText));
-);
     		activity.startActivity(Intent.createChooser(i, "Send mail..."));
 	}
 }
