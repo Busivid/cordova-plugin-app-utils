@@ -172,7 +172,29 @@ NSString* callbackId;
 
 - (void) ComposeEmail:(CDVInvokedUrlCommand *)command
 {
-
+	NSMutableDictionary* options = [command.arguments objectAtIndex:0];
+	NSString* body = [options objectForKey:@"body"];
+	// NSArray* recipients = [options objectForKey:@"recipients"];
+	CDVPluginResult* pluginResult = nil;
+	
+	if (![MFMailComposeViewController canSendMail]) {
+		pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+																									 [NSNumber numberWithInt:2],
+																									 @"code", @"Unavailable",
+																									 @"reason", nil]];
+		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+		return;
+	}
+	
+	MFMailComposeViewController* mailController = [[MFMailComposeViewController alloc] init];
+	
+	callbackId = command.callbackId;
+	self.mailController = mailController;
+	mailController.mailComposeDelegate = self;
+	
+	[mailController setMessageBody:body isHTML:YES];
+	// [mailController setRecipients:recipents];
+	[self.viewController presentViewController:mailController animated:YES completion:nil];
 }
 
 - (void) ComposeSMS:(CDVInvokedUrlCommand *)command
@@ -190,19 +212,49 @@ NSString* callbackId;
 		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 		return;
 	}
-
+	
 	// Will display a dialog if text messaging is unavailable.
 	MFMessageComposeViewController* messageController = [[MFMessageComposeViewController alloc] init];
-
+	
 	callbackId = command.callbackId;
 	self.messageController = messageController;
 	messageController.messageComposeDelegate = self;
 	
-	// [viewController setRecipients:recipents];
 	[messageController setBody:body];
+	// [messageController setRecipients:recipents];
 	[self.viewController presentViewController:messageController animated:YES completion:nil];
 }
 
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+	CDVPluginResult* pluginResult = nil;
+	switch (result) {
+		case MFMailComposeResultCancelled:
+		case MFMailComposeResultSaved:
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+																										 [NSNumber numberWithInt:2],
+																										 @"code", @"Cancelled",
+																										 @"reason", nil]];
+			break;
+			
+		case MFMailComposeResultFailed:
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+																										 [NSNumber numberWithInt:2],
+																										 @"code", @"Failed",
+																										 @"reason", nil]];
+			break;
+
+		case MFMailComposeResultSent:
+			// The user successfully queued or sent the message.
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+			break;
+			
+		default:
+			break;
+	}
+	
+	[self.messageController dismissViewControllerAnimated:YES completion:nil];
+	[self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+}
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult) result
 {
 	CDVPluginResult* pluginResult = nil;
@@ -215,13 +267,11 @@ NSString* callbackId;
 			break;
 			
 		case MessageComposeResultFailed:
-		{
 			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
 																										 [NSNumber numberWithInt:2],
 																										 @"code", @"Failed",
 																										 @"reason", nil]];
 			break;
-		}
 			
 		case MessageComposeResultSent:
 			// The user successfully queued or sent the message.

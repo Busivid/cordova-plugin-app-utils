@@ -27,11 +27,12 @@
 #import <Cordova/CDV.h>
 #import <MessageUI/MessageUI.h>
 
-@interface AppUtils : CDVPlugin <MFMessageComposeViewControllerDelegate>
+@interface AppUtils : CDVPlugin <MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate>
 
 @property (nonatomic, strong) UIDocumentInteractionController *controller;
-@property (nonatomic, strong) UIPopoverController *popover;
+@property (strong) MFMailComposeViewController* mailController;
 @property (strong) MFMessageComposeViewController* messageController;
+@property (nonatomic, strong) UIPopoverController *popover;
 - (void) DeviceInfo: (CDVInvokedUrlCommand*)command;
 - (void) IdleTimer:(CDVInvokedUrlCommand*)command;
 - (void) BundleInfo:(CDVInvokedUrlCommand*)command;
