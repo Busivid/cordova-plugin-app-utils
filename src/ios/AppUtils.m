@@ -181,8 +181,6 @@ NSString* callbackId;
 	NSString* body = [options objectForKey:@"body"];
 	// NSArray* recipients = [options objectForKey:@"recipients"];
 	CDVPluginResult* pluginResult = nil;
-	
-	MFMessageComposeViewController* messageController = [[MFMessageComposeViewController alloc] init];
 
 	if (![MFMessageComposeViewController canSendText]) {
 		pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -192,7 +190,10 @@ NSString* callbackId;
 		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 		return;
 	}
-	
+
+	// Will display a dialog if text messaging is unavailable.
+	MFMessageComposeViewController* messageController = [[MFMessageComposeViewController alloc] init];
+
 	callbackId = command.callbackId;
 	self.messageController = messageController;
 	messageController.messageComposeDelegate = self;
