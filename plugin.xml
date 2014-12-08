@@ -16,7 +16,7 @@
 				<param name="android-package" value="au.id.ryanwilliams.cordova.apputils.AppUtils"/>
 			</feature>
 		</config-file>
-		 <source-file src="src/android/AppUtils.java" target-dir="src/au.id.ryanwilliams.cordova.apputils/" />
+		<source-file src="src/android/AppUtils.java" target-dir="src/au.id.ryanwilliams.cordova.apputils/" />
 	</platform>
 	<platform name="ios">
 		<config-file target="config.xml" parent="/*">
@@ -24,6 +24,7 @@
 				<param name="ios-package" value="AppUtils" />
 			</feature>
 		</config-file>
+		<framework src="libs/ios/MessageUI.framework" />
 		<header-file src="src/ios/AppUtils.h" />
 		<source-file src="src/ios/AppUtils.m" />
 	</platform>
