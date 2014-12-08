@@ -31,12 +31,15 @@
 @synthesize controller;
 @synthesize popover;
 
+NSString* callbackId;
+
 - (void)DeviceInfo:(CDVInvokedUrlCommand *)command
 {
     UIDevice* device = [UIDevice currentDevice]; 
     NSMutableDictionary* deviceInfo = [NSMutableDictionary dictionaryWithCapacity:1];
     [deviceInfo setObject:[device name] forKey:@"name"];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:deviceInfo];
+	[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)IdleTimer:(CDVInvokedUrlCommand *)command
@@ -167,11 +170,76 @@
     });
 }
 
+- (void) ComposeEmail:(CDVInvokedUrlCommand *)command
+{
+
+}
+
+- (void) ComposeSMS:(CDVInvokedUrlCommand *)command
+{
+	NSMutableDictionary* options = [command.arguments objectAtIndex:0];
+	NSString* body = [options objectForKey:@"body"];
+	// NSArray* recipients = [options objectForKey:@"recipients"];
+	CDVPluginResult* pluginResult = nil;
+	
+	MFMessageComposeViewController* messageController = [[MFMessageComposeViewController alloc] init];
+
+	if (![MFMessageComposeViewController canSendText]) {
+		pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+																									 [NSNumber numberWithInt:2],
+																									 @"code", @"Unavailable",
+																									 @"reason", nil]];
+		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+		return;
+	}
+	
+	callbackId = command.callbackId;
+	self.messageController = messageController;
+	messageController.messageComposeDelegate = self;
+	
+	// [viewController setRecipients:recipents];
+	[messageController setBody:body];
+	[self.viewController presentViewController:messageController animated:YES completion:nil];
+}
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult) result
+{
+	CDVPluginResult* pluginResult = nil;
+	switch (result) {
+		case MessageComposeResultCancelled:
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+																										 [NSNumber numberWithInt:2],
+																										 @"code", @"Cancelled",
+																										 @"reason", nil]];
+			break;
+			
+		case MessageComposeResultFailed:
+		{
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+																										 [NSNumber numberWithInt:2],
+																										 @"code", @"Failed",
+																										 @"reason", nil]];
+			break;
+		}
+			
+		case MessageComposeResultSent:
+			// The user successfully queued or sent the message.
+			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+			break;
+			
+		default:
+			break;
+	}
+	
+	[self.messageController dismissViewControllerAnimated:YES completion:nil];
+	[self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
+}
+
 - (void) SocialShare:(CDVInvokedUrlCommand *)command
 {
     NSMutableDictionary *options = [command.arguments objectAtIndex:0];
     NSString* text = [options objectForKey:@"text"];
-    NSString *url = [options objectForKey:@"url"];
+    NSString* url = [options objectForKey:@"url"];
     
     CDVViewController* cont = (CDVViewController*)[ super viewController ];
     NSMutableArray *activityItems = [NSMutableArray arrayWithCapacity:10];

@@ -30,18 +30,18 @@ public class AppUtils extends CordovaPlugin {
 			} catch (NameNotFoundException exception) {
 				callbackContext.error(exception.getMessage());	
 			}
+		} else if(action.equals("ComposeEmail")) {
+			JSONObject jsonObject = args.getJSONObject(0);
+			composeEmail(jsonObject.getString("body"), jsonObject.getString("subject"));
+			callbackContext.success();	
+		} else if(action.equals("ComposeSMS")) {
+			JSONObject jsonObject = args.getJSONObject(0);
+			composeSMS(jsonObject.getString("body"));
+			callbackContext.success();	
 		} else if (action.equals("DeviceInfo")) {
 			JSONObject deviceInfo = new JSONObject();
 			deviceInfo.put("name", this.getHostname());
 			callbackContext.success(deviceInfo);
-		} else if(action.equals("ShareToEmail")) {
-			JSONObject jsonObject = args.getJSONObject(0);
-			sendEmail(jsonObject.getString("text"), jsonObject.getString("subject"));
-			callbackContext.success();	
-		} else if(action.equals("ShareToSms")) {
-			JSONObject jsonObject = args.getJSONObject(0);
-			sendSms(jsonObject.getString("text"));
-			callbackContext.success();	
 		} else {
 			return false;
 		}
@@ -74,17 +74,26 @@ public class AppUtils extends CordovaPlugin {
 		}
 	}
 
-	public void sendSms(String smsText) {
+	public void composeEmail(String body, String subject) {
+		Activity activity = this.cordova.getActivity();
+		Intent i = new Intent(Intent.ACTION_SEND);
+		i.setType("text/html");
+		//i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
+		i.putExtra(Intent.EXTRA_SUBJECT, subject);
+		i.putExtra(Intent.EXTRA_TEXT, android.text.Html.fromHtml(body));
+		activity.startActivity(Intent.createChooser(i, "Send mail..."));
+	}
+
+	public void composeSMS(String body) {
 		Activity activity = this.cordova.getActivity();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(activity); //Need to change the build to API 19
 			Intent sendIntent = new Intent(Intent.ACTION_SEND);
 			sendIntent.setType("text/plain");
-			sendIntent.putExtra(Intent.EXTRA_TEXT, smsText);
+			sendIntent.putExtra(Intent.EXTRA_TEXT, body);
 
-			if (defaultSmsPackageName != null) { // if no default then Android will allow user to select from list
+			if (defaultSmsPackageName != null) // if no default then Android will allow user to select from list
 				sendIntent.setPackage(defaultSmsPackageName);
-			}
 
 			activity.startActivity(sendIntent);
 			return;
@@ -93,17 +102,7 @@ public class AppUtils extends CordovaPlugin {
 		//pre-kitkat way of sending an sms
 		Intent sendIntent = new Intent(Intent.ACTION_VIEW);
 		sendIntent.setData(Uri.parse("sms:"));
-		sendIntent.putExtra("sms_body", smsText);
+		sendIntent.putExtra("sms_body", body);
 		activity.startActivity(sendIntent);
-	}
-
-	public void sendEmail(String emailText, String subject) {
-		Activity activity = this.cordova.getActivity();
-		Intent i = new Intent(Intent.ACTION_SEND);
-		i.setType("text/html");
-		//i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
-		i.putExtra(Intent.EXTRA_SUBJECT, subject);
-		i.putExtra(Intent.EXTRA_TEXT, android.text.Html.fromHtml(emailText));
-    		activity.startActivity(Intent.createChooser(i, "Send mail..."));
 	}
 }
