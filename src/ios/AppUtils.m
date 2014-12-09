@@ -174,7 +174,7 @@ NSString* callbackId;
 {
 	NSMutableDictionary* options = [command.arguments objectAtIndex:0];
 	NSString* body = [options objectForKey:@"body"];
-	// NSArray* recipients = [options objectForKey:@"recipients"];
+	NSArray* recipients = [options objectForKey:@"recipients"];
 	CDVPluginResult* pluginResult = nil;
 	
 	if (![MFMailComposeViewController canSendMail]) {
@@ -193,7 +193,7 @@ NSString* callbackId;
 	mailController.mailComposeDelegate = self;
 	
 	[mailController setMessageBody:body isHTML:YES];
-	// [mailController setRecipients:recipents];
+	[mailController setToRecipients:recipients];
 	[self.viewController presentViewController:mailController animated:YES completion:nil];
 }
 
@@ -201,7 +201,7 @@ NSString* callbackId;
 {
 	NSMutableDictionary* options = [command.arguments objectAtIndex:0];
 	NSString* body = [options objectForKey:@"body"];
-	// NSArray* recipients = [options objectForKey:@"recipients"];
+	NSArray* recipients = [options objectForKey:@"recipients"];
 	CDVPluginResult* pluginResult = nil;
 
 	if (![MFMessageComposeViewController canSendText]) {
@@ -221,7 +221,7 @@ NSString* callbackId;
 	messageController.messageComposeDelegate = self;
 	
 	[messageController setBody:body];
-	// [messageController setRecipients:recipents];
+	[messageController setRecipients:recipients];
 	[self.viewController presentViewController:messageController animated:YES completion:nil];
 }
 
