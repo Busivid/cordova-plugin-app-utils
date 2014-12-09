@@ -256,7 +256,7 @@ NSString* callbackId;
 			break;
 	}
 	
-	[self.messageController dismissViewControllerAnimated:YES completion:nil];
+	[self.mailController dismissViewControllerAnimated:YES completion:nil];
 	[self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult) result

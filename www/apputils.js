@@ -35,11 +35,29 @@ AppUtils.prototype.BundleInfo = function (onSuccess) {
 		
 // ComposeEmail
 AppUtils.prototype.ComposeEmail = function (onSuccess, onError, options) {
+	if (typeof options == 'undefined' || options == null)
+		options = {};
+
+	if (typeof options.recipients == 'string')
+		options.recipients = new Array(options.recipients);
+
+	if (typeof options.recipients == 'undefined' || !Array.isArray(options.recipients))
+		options.recipients = new Array();
+
 	exec(onSuccess, onError, 'AppUtils', 'ComposeEmail', [options]);
 };
 
 // ComposeSMS
 AppUtils.prototype.ComposeSMS = function (onSuccess, onError, options) {
+	if (typeof options == 'undefined' || options == null)
+		options = {};
+
+	if (typeof options.recipients == 'string')
+		options.recipients = new Array(options.recipients);
+
+	if (typeof options.recipients == 'undefined' || !Array.isArray(options.recipients))
+		options.recipients = new Array();
+	
 	exec(onSuccess, onError, 'AppUtils', 'ComposeSMS', [options]);
 };
 
