@@ -225,7 +225,8 @@ NSString* callbackId;
 	
 	[messageController setBody:body];
 	[messageController setRecipients:recipients];
-	[messageController setSubject:subject];
+	if ([MFMessageComposeViewController canSendSubject])
+		[messageController setSubject:subject];
 	[self.viewController presentViewController:messageController animated:YES completion:nil];
 }
 
