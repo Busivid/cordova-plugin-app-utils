@@ -88,9 +88,9 @@ NSString* callbackId;
         CDVPluginResult* pluginResult = nil;
         
         #ifdef DEBUG
-            NSString* isDebug = @"true";
+            BOOL isDebug = YES;
         #else
-            NSString* isDebug = @"false";
+            BOOL isDebug = NO;
         #endif
         
         NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -98,7 +98,7 @@ NSString* callbackId;
                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"], @"bundleBuild",
                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"], @"bundleId",
                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"], @"bundleDisplayName",
-                              isDebug, @"bundleIsDebug",
+                              [NSNumber numberWithBool:isDebug], @"bundleIsDebug",
                               [[NSLocale preferredLanguages] objectAtIndex:0], @"localeLanguage", nil];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:info];
         
