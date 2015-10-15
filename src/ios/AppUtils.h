@@ -36,9 +36,7 @@
 - (void) DeviceInfo: (CDVInvokedUrlCommand*)command;
 - (void) IdleTimer:(CDVInvokedUrlCommand*)command;
 - (void) BundleInfo:(CDVInvokedUrlCommand*)command;
-- (void) OpenWith:(CDVInvokedUrlCommand*)command;
 - (void) ComposeEmail:(CDVInvokedUrlCommand *)command;
 - (void) ComposeSMS:(CDVInvokedUrlCommand *)command;
-- (void) SocialShare:(CDVInvokedUrlCommand*)command;
 
 @end
