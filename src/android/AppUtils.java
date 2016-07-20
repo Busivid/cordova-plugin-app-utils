@@ -11,6 +11,8 @@ import android.os.Build;
 import android.provider.Telephony;
 
 import java.lang.reflect.Method;
+import java.lang.String;
+import java.util.ArrayList;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -20,9 +22,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AppUtils extends CordovaPlugin {
+	
+	private static final int EMAIL_INTENT_RESULT = 1000;
+	private static final int SMS_INTENT_RESULT = 1001;
 
+	private CallbackContext callbackContext; // The callback context from which we were invoked.
+	
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+	
+		this.callbackContext = callbackContext;
+		
 		if (action.equals("BundleInfo")) {
 			try {
  				JSONObject bundleInfo = this.bundleInfo();
@@ -32,12 +42,14 @@ public class AppUtils extends CordovaPlugin {
 			}
 		} else if(action.equals("ComposeEmail")) {
 			JSONObject jsonObject = args.getJSONObject(0);
-			composeEmail(jsonObject.getString("body"), jsonObject.getString("subject"));
-			callbackContext.success();	
+			JSONArray recipientsJson = jsonObject.getJSONArray("recipients");
+			String[] recipients = convertJsonArrayToStringArray(recipientsJson);
+			composeEmail(jsonObject.getString("body"), jsonObject.getString("subject"), recipients);
 		} else if(action.equals("ComposeSMS")) {
 			JSONObject jsonObject = args.getJSONObject(0);
-			composeSMS(jsonObject.getString("body"));
-			callbackContext.success();	
+                        JSONArray recipientsJson = jsonObject.getJSONArray("recipients");
+                        String[] recipients = convertJsonArrayToStringArray(recipientsJson);
+			composeSMS(jsonObject.getString("body"), recipients);
 		} else if (action.equals("DeviceInfo")) {
 			JSONObject deviceInfo = new JSONObject();
 			deviceInfo.put("name", this.getHostname());
@@ -74,35 +86,79 @@ public class AppUtils extends CordovaPlugin {
 		}
 	}
 
-	public void composeEmail(String body, String subject) {
-		Activity activity = this.cordova.getActivity();
-		Intent i = new Intent(Intent.ACTION_SEND);
-		i.setType("text/html");
-		//i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"recipient@example.com"});
-		i.putExtra(Intent.EXTRA_SUBJECT, subject);
-		i.putExtra(Intent.EXTRA_TEXT, android.text.Html.fromHtml(body));
-		activity.startActivity(Intent.createChooser(i, "Send mail..."));
+	public static String[] convertJsonArrayToStringArray(JSONArray jsonArray) {
+		try {
+			ArrayList<String> list = new ArrayList<String>();
+			for(int i = 0; i < jsonArray.length(); i++) {
+				list.add((String)jsonArray.get(i));
+			}
+		
+			return list.toArray(new String[list.size()]);
+		} catch (JSONException exception) {
+			return new String[0];
+		}
 	}
 
-	public void composeSMS(String body) {
-		Activity activity = this.cordova.getActivity();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(activity); //Need to change the build to API 19
-			Intent sendIntent = new Intent(Intent.ACTION_SEND);
-			sendIntent.setType("text/plain");
-			sendIntent.putExtra(Intent.EXTRA_TEXT, body);
+	public static String joinArrayToString(String[] input, String seperator) {
+		String output = "";
 
-			if (defaultSmsPackageName != null) // if no default then Android will allow user to select from list
-				sendIntent.setPackage(defaultSmsPackageName);
-
-			activity.startActivity(sendIntent);
-			return;
+		for (String s : input) {
+			if(output == "") {
+				output += s;
+			} else {
+				output += seperator + s;
+			}
 		}
 
-		//pre-kitkat way of sending an sms
-		Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-		sendIntent.setData(Uri.parse("sms:"));
-		sendIntent.putExtra("sms_body", body);
-		activity.startActivity(sendIntent);
+		return output;
+	}
+
+	public void composeEmail(final String body, final String subject, final String[] recipients) {
+		final CordovaPlugin plugin = (CordovaPlugin) this;
+		Runnable worker = new Runnable() {
+			public void run() {
+                		Intent emailIntent = new Intent(Intent.ACTION_SEND);
+				emailIntent.setData(Uri.parse("mailto:"));
+				emailIntent.setType("message/rfc822");
+				//emailIntent.setType("text/html");
+				emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
+				emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+				emailIntent.putExtra(Intent.EXTRA_TEXT, android.text.Html.fromHtml(body));
+                		emailIntent.putExtra(Intent.EXTRA_HTML_TEXT, android.text.Html.fromHtml(body));
+				plugin.cordova.startActivityForResult(plugin, emailIntent, EMAIL_INTENT_RESULT);
+            		}
+        	};
+        	this.cordova.getThreadPool().execute(worker);
+	}
+
+	public void composeSMS(final String body, final String[] recipients) {
+		final CordovaPlugin plugin = (CordovaPlugin) this;
+		final String recipientsAsString = joinArrayToString(recipients, ",");
+
+		Runnable worker = new Runnable() {
+			public void run() {
+				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+					Intent smsIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("smsto:"+recipientsAsString));
+					smsIntent.setType("vnd.android-dir/mms-sms");
+					smsIntent.putExtra("address", recipientsAsString);
+					smsIntent.putExtra("sms_body", body);
+					plugin.cordova.startActivityForResult(plugin, smsIntent, SMS_INTENT_RESULT);
+					return;
+				}
+				//pre-kitkat way of sending an sms
+				Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+				smsIntent.setData(Uri.parse("sms:"));
+				smsIntent.putExtra("sms_body", body);
+				plugin.cordova.startActivityForResult(plugin, smsIntent, SMS_INTENT_RESULT);
+			}
+		};
+		this.cordova.getThreadPool().execute(worker);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == EMAIL_INTENT_RESULT || requestCode == SMS_INTENT_RESULT) {
+			this.callbackContext.success();
+		}
 	}
 }
