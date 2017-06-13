@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="au.id.ryanwilliams.cordova.apputils" version="0.1.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="com.busivid.cordova.apputils" version="0.1.0">
 	<name>AppUtils</name>
-	<author>Paul Cervenka</author>
+	<author>Busivid Team</author>
 	<description>Cordova App Utils Plugin: IdleTimer, BundleInfo</description>
 	<keywords>utils, timer, idle, idletimer, bundleinfo, bundle</keywords>
 	<engines>
@@ -13,10 +13,10 @@
 	<platform name="android">
 		<config-file target="config.xml" parent="/*">
 			<feature name="AppUtils">
-				<param name="android-package" value="au.id.ryanwilliams.cordova.apputils.AppUtils"/>
+				<param name="android-package" value="com.busivid.cordova.apputils.AppUtils"/>
 			</feature>
 		</config-file>
-		<source-file src="src/android/AppUtils.java" target-dir="src/au.id.ryanwilliams.cordova.apputils/" />
+		<source-file src="src/android/AppUtils.java" target-dir="src/com.busivid.cordova.apputils/" />
 	</platform>
 	<platform name="ios">
 		<config-file target="config.xml" parent="/*">
