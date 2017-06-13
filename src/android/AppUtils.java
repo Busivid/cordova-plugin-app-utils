@@ -1,4 +1,4 @@
-package au.id.ryanwilliams.cordova.apputils;
+package com.busivid.cordova.apputils;
 
 import android.app.Activity;
 import android.content.pm.ApplicationInfo;
