@@ -9,6 +9,7 @@
 		<clobbers target="AppUtils" />
 	</js-module>
 	<keywords>utils, timer, idle, idletimer, bundleinfo, bundle</keywords>
+	<license>MIT</license>
 	<name>cordova-plugin-app-utils</name>
 	<platform name="android">
 		<config-file parent="/*" target="config.xml">
