@@ -8,7 +8,7 @@
 		<engine name="cordova" version=">=3.0.0" />
 	</engines>
 	<js-module name="AppUtils" src="www/apputils.js" >
-		<clobbers target="window.AppUtils" />
+		<clobbers target="AppUtils" />
 	</js-module>
 	<platform name="android">
 		<config-file target="config.xml" parent="/*">
