@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="com.busivid.cordova.apputils" version="0.1.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-app-utils" version="0.1.0">
 	<name>AppUtils</name>
 	<author>Busivid Team</author>
 	<description>Cordova App Utils Plugin: IdleTimer, BundleInfo</description>
