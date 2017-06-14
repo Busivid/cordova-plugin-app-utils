@@ -1,7 +1,5 @@
 {
-  "name": "cordova-plugin-app-utils",
-  "version": "1.0.0",
-  "description": "",
+  "author": "Busivid Team",  
   "cordova": {
     "id": "cordova-plugin-app-utils",
     "platforms": [
@@ -9,17 +7,19 @@
       "ios"
     ]
   },
+  "description": "",
+  "keywords": [
+    "app utils",
+    "cordova",    
+    "cordova-android",
+    "cordova-ios",
+    "ecosystem:cordova"
+  ],  
+  "license": "MIT",
+  "name": "cordova-plugin-app-utils",
   "repository": {
     "type": "git",
     "url": "https://github.com/busivid/cordova-plugin-app-utils"
-  },
-  "keywords": [
-    "cordova",
-    "ecosystem:cordova",
-    "app utils",
-    "cordova-android",
-    "cordova-ios"
-  ],
-  "author": "Busivid Team",
-  "license": "MIT"
+  },  
+  "version": "1.0.0"
 }
