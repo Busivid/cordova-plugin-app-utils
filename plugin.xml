@@ -5,7 +5,7 @@
 	<engines>
 		<engine name="cordova" version=">=3.0.0" />
 	</engines>
-	<js-module name="AppUtils" src="www/apputils.js" >
+	<js-module name="AppUtils" src="www/AppUtils.js" >
 		<clobbers target="AppUtils" />
 	</js-module>
 	<keywords>utils, timer, idle, idletimer, bundleinfo, bundle</keywords>
