@@ -141,6 +141,7 @@ public class AppUtils extends CordovaPlugin {
 					Intent smsIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("smsto:"+recipientsAsString));
 					smsIntent.setType("vnd.android-dir/mms-sms");
 					smsIntent.putExtra("address", recipientsAsString);
+					smsIntent.putExtra("exit_on_sent", true);
 					smsIntent.putExtra("sms_body", body);
 					plugin.cordova.startActivityForResult(plugin, smsIntent, SMS_INTENT_RESULT);
 					return;
