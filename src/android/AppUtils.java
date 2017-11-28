@@ -36,14 +36,23 @@ public class AppUtils extends CordovaPlugin {
 			}
 		} else if(action.equals("ComposeEmail")) {
 			JSONObject jsonObject = args.getJSONObject(0);
+
+			String body = jsonObject.getString("body");
 			JSONArray recipientsJson = jsonObject.getJSONArray("recipients");
+			String subject = jsonObject.getString("subject");
+
 			String[] recipients = convertJsonArrayToStringArray(recipientsJson);
-			composeEmail(jsonObject.getString("body"), jsonObject.getString("subject"), recipients);
+
+			composeEmail(body, subject, recipients);
 		} else if(action.equals("ComposeSMS")) {
 			JSONObject jsonObject = args.getJSONObject(0);
+
+			String body = jsonObject.getString("body");
 			JSONArray recipientsJson = jsonObject.getJSONArray("recipients");
+
 			String[] recipients = convertJsonArrayToStringArray(recipientsJson);
-			composeSMS(jsonObject.getString("body"), recipients);
+
+			composeSMS(body, recipients);
 		} else if (action.equals("DeviceInfo")) {
 			JSONObject deviceInfo = new JSONObject();
 			deviceInfo.put("name", this.getHostname());
@@ -59,9 +68,7 @@ public class AppUtils extends CordovaPlugin {
 
 		Activity cordovaActivity = this.cordova.getActivity();
 		String packageName = cordovaActivity.getPackageName();
-
 		PackageInfo packageInfo = cordovaActivity.getPackageManager().getPackageInfo(packageName, 0);
-
 		boolean isDebug = (cordovaActivity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
 
 		results.put("bundleVersion", packageInfo.versionCode);
