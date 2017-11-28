@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Telephony;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -138,19 +139,22 @@ public class AppUtils extends CordovaPlugin {
 
 		Runnable worker = new Runnable() {
 			public void run() {
-				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-					Intent smsIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("smsto:"+recipientsAsString));
-					smsIntent.setType("vnd.android-dir/mms-sms");
-					smsIntent.putExtra("address", recipientsAsString);
-					smsIntent.putExtra("exit_on_sent", true);
-					smsIntent.putExtra("sms_body", body);
-					plugin.cordova.startActivityForResult(plugin, smsIntent, SMS_INTENT_RESULT);
-					return;
-				}
-				//pre-kitkat way of sending an sms
-				Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-				smsIntent.setData(Uri.parse("sms:"));
+				Intent smsIntent = new Intent();
+				smsIntent.setData(Uri.parse("sms:" + recipientsAsString));
+				smsIntent.putExtra("address", recipientsAsString);
+				smsIntent.putExtra(Intent.EXTRA_TEXT, body);
+				smsIntent.putExtra("exit_on_sent", true);
 				smsIntent.putExtra("sms_body", body);
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+					smsIntent.setAction(Intent.ACTION_SENDTO);
+					String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(plugin.cordova.getActivity());
+					if (defaultSmsPackageName != null)
+						smsIntent.setPackage(defaultSmsPackageName);
+				} else {
+					smsIntent.setAction(Intent.ACTION_VIEW);
+				}
+
 				plugin.cordova.startActivityForResult(plugin, smsIntent, SMS_INTENT_RESULT);
 			}
 		};
